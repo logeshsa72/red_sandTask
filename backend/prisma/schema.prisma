@@ -1,0 +1,130 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  password     String
+  phone        String?
+  avatar       String?
+  role         Role      @default(USER)
+  isVerified   Boolean   @default(false)
+  refreshToken String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  properties   Property[]
+  inquiries    Inquiry[]  @relation("BuyerInquiries")
+  receivedInquiries Inquiry[] @relation("OwnerInquiries")
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Property {
+  id            String        @id @default(uuid())
+  title         String
+  description   String
+  price         BigInt
+  city          String
+  locality      String
+  address       String
+  latitude      Float?
+  longitude     Float?
+  propertyType  PropertyType
+  listingType   ListingType
+  bedrooms      Int
+  bathrooms     Int
+  area          Float
+  areaUnit      AreaUnit      @default(SQFT)
+  furnished     FurnishedType @default(UNFURNISHED)
+  amenities     String[]
+  images        String[]
+  isActive      Boolean       @default(true)
+  views         Int           @default(0)
+
+  ownerId       String
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  inquiries     Inquiry[]
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([city])
+  @@index([price])
+  @@index([propertyType])
+  @@index([bedrooms])
+  @@index([ownerId])
+  @@index([isActive])
+  @@index([city, propertyType, bedrooms])
+}
+
+model Inquiry {
+  id         String        @id @default(uuid())
+  message    String
+  status     InquiryStatus @default(PENDING)
+
+  buyerId    String
+  buyer      User          @relation("BuyerInquiries", fields: [buyerId], references: [id], onDelete: Cascade)
+
+  ownerId    String
+  owner      User          @relation("OwnerInquiries", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  propertyId String
+  property   Property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([buyerId, propertyId])
+  @@index([propertyId])
+  @@index([buyerId])
+  @@index([ownerId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PropertyType {
+  APARTMENT
+  VILLA
+  HOUSE
+  PLOT
+  COMMERCIAL
+  PG
+}
+
+enum ListingType {
+  SALE
+  RENT
+}
+
+enum FurnishedType {
+  FURNISHED
+  SEMI_FURNISHED
+  UNFURNISHED
+}
+
+enum AreaUnit {
+  SQFT
+  SQMT
+  ACRES
+}
+
+enum InquiryStatus {
+  PENDING
+  RESPONDED
+  CLOSED
+}
