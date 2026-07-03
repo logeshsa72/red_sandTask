@@ -3,6 +3,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma.js";
 import { AppError } from "../utils/AppError.js";
+import { transporter } from "../lib/mailer.js";
 
 // POST /api/auth/forgot-password
 // Always responds with a generic success message — never reveals whether
@@ -10,6 +11,10 @@ import { AppError } from "../utils/AppError.js";
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
+
+    if (!email) {
+      throw new AppError("Email is required", 400);
+    }
 
     const user = await prisma.user.findUnique({ where: { email } });
 
@@ -34,10 +39,29 @@ export const forgotPassword = async (req, res, next) => {
 
     const resetUrl = `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password?token=${rawToken}&email=${encodeURIComponent(email)}`;
 
-    // NOTE: wire this up to a real email provider (SendGrid, SES, etc.)
-    // in production. Logged here so the flow is testable end-to-end
-    // without external dependencies.
-    console.log(`📧 Password reset link for ${email}: ${resetUrl}`);
+    // Send the actual reset email. Errors here are logged but not thrown,
+    // so the response stays generic either way (anti-enumeration).
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM || `"NestFind" <${process.env.SMTP_USER}>`,
+        to: email,
+        subject: "Reset your password",
+        html: `
+          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+            <h2 style="color:#1e293b;">Reset your password</h2>
+            <p style="color:#475569;">We received a request to reset your NestFind password. This link expires in 15 minutes.</p>
+            <p style="margin: 24px 0;">
+              <a href="${resetUrl}" style="background:#4f46e5; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600;">
+                Reset Password
+              </a>
+            </p>
+            <p style="color:#94a3b8; font-size:13px;">If you didn't request this, you can safely ignore this email.</p>
+          </div>
+        `,
+      });
+    } catch (mailErr) {
+      console.error(`Failed to send reset email to ${email}:`, mailErr);
+    }
 
     res.json(genericResponse);
   } catch (err) {
@@ -49,6 +73,10 @@ export const forgotPassword = async (req, res, next) => {
 export const resetPassword = async (req, res, next) => {
   try {
     const { email, token, password } = req.body;
+
+    if (!email || !token || !password) {
+      throw new AppError("Email, token, and password are all required", 400);
+    }
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.resetToken || !user.resetTokenExpiry) {
