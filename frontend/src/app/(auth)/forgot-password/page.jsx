@@ -2,7 +2,7 @@
 // frontend/src/app/(auth)/forgot-password/page.jsx
 import { useState } from "react";
 import Link from "next/link";
-import { authApi } from "@/lib/api/auth";
+import { authApi } from "../../../lib/api/auth";
 import { Home, Mail, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 export default function ForgotPasswordPage() {

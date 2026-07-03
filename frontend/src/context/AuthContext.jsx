@@ -1,7 +1,7 @@
 "use client";
 // frontend/src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { authApi } from "@/lib/api/auth";
+import { authApi } from "../lib/api/auth";
 
 const AuthContext = createContext(null);
 
