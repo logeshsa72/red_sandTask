@@ -2,7 +2,7 @@
 "use client";
 import { useState, useRef, useCallback } from "react";
 import { Upload, X, ImagePlus, Loader2, AlertCircle, GripVertical } from "lucide-react";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 

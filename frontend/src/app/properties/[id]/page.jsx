@@ -3,9 +3,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { propertyApi } from "@/lib/api/properties";
-import { inquiryApi } from "@/lib/api/inquiries";
+import { useAuth } from "../../../context/AuthContext";
+import { propertyApi } from "../../../lib/api/properties";
+import { inquiryApi } from "../../../lib/api/inquiries";
 import {
   Home, ArrowLeft, MapPin, Bed, Bath, Maximize2, IndianRupee, Eye,
   Loader2, AlertCircle, CheckCircle2, Phone, Mail, User, Trash2, Pencil,

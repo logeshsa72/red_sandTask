@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { propertyApi } from "@/lib/api/properties";
+import { useAuth } from "../../context/AuthContext";
+import { propertyApi } from "../../lib/api/properties";
 import {
   Home, Search, SlidersHorizontal, MapPin, Bed, Bath,
   Maximize2, IndianRupee, ChevronLeft, ChevronRight,

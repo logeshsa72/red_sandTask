@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { propertyApi } from "@/lib/api/properties";
-import ImageUploader from "@/components/ImageUploader";
+import { useAuth } from "../../../context/AuthContext";
+import { propertyApi } from "../../../lib/api/properties";
+import ImageUploader from "../../../components/ImageUploader";
 import {
   Home, ArrowLeft, Loader2, CheckCircle2, AlertCircle,
   MapPin, IndianRupee, Bed, Bath, Maximize2, Info,
