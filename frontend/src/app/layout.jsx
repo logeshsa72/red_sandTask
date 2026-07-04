@@ -1,6 +1,6 @@
 // frontend/src/app/layout.jsx
 import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "../context/AuthContext";
 
 export const metadata = {
   title: "NestFind – Find Your Perfect Property",

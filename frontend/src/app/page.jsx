@@ -2,7 +2,7 @@
 // frontend/src/app/page.jsx
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 export default function RootPage() {
